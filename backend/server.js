@@ -3,6 +3,35 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const pool = require('./database');
+const fs = require('fs');
+
+async function initDatabase() {
+  try {
+    const schema = fs.readFileSync(
+      path.join(__dirname, '../database/schema.sql'),
+      'utf8'
+    );
+    const statements = schema
+      .split(';')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+
+    for (const statement of statements) {
+      try {
+        await pool.query(statement);
+      } catch (e) {
+        if (!e.message.includes('already exists')) {
+          console.error('Schema error:', e.message);
+        }
+      }
+    }
+    console.log('Database initialized successfully');
+  } catch (e) {
+    console.error('Database init failed:', e.message);
+  }
+}
+
+initDatabase();
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
