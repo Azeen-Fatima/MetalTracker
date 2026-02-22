@@ -8,7 +8,7 @@ const fs = require('fs');
 async function initDatabase() {
   try {
     const schema = fs.readFileSync(
-      path.join(__dirname, '../database/schema.sql'),
+      path.join(__dirname, '../../database/schema.sql'),
       'utf8'
     );
     const statements = schema
@@ -72,7 +72,7 @@ app.use('/api/predictions', predictionsRoutes);
 app.use('/api/pdf', pdfRoutes);
 app.use('/api/alerts', alertsRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
