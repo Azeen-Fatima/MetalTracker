@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MetalTracker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+</head>
+
+<body>
+    <div class="auth-container fade-in">
+        <div class="card auth-card slide-up">
+            <h1>MetalTracker</h1>
+            <p>Log in to your account</p>
+
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+
+            <button id="btn-login" onclick="login()">
+                <span class="btn-text">Log In</span>
+            </button>
+
+            <p style="margin-top: 20px; font-size: 0.9rem;">
+                Don't have an account? <a href="signup.html">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        if (getToken()) {
+            window.location.href = 'dashboard.html';
+        }
+
+        const setBtnLoading = (btnId, isLoading, text) => {
+            const btn = document.getElementById(btnId);
+            if (isLoading) {
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div>';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="btn-text">${text}</span>`;
+            }
+        };
+
+        async function login() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showToast("Please fill in all fields.", "error");
+                return;
+            }
+
+            setBtnLoading('btn-login', true, '');
+
+            try {
+                const data = await api.auth.login({ email, password });
+                localStorage.setItem('metaltracker_token', data.token);
+                localStorage.setItem('metaltracker_user', JSON.stringify(data.user));
+                showToast("Login successful!");
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                setBtnLoading('btn-login', false, 'Log In');
+            }
+        }
+    </script>
+</body>
+
+</html>

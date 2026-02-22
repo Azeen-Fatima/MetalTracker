@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MetalTracker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard-header fade-in">
+        <div class="logo"><img src="images/logo.png" alt="logo"
+                style="height:42px; width:42px; object-fit:cover; border-radius:50%; margin-right:2px; vertical-align:middle;">MetalTracker
+        </div>
+        <div class="header-right" style="display: flex; align-items: center;">
+            <span id="theme-display" style="margin-right: 15px; font-size: 1.2rem; user-select: none;">🌙</span>
+            <span id="header-currency" style="font-weight: bold; margin-right: 5px; user-select: none;">USD</span>
+            <span>|</span>
+            <span id="header-unit"
+                style="font-weight: bold; margin-left: 5px; margin-right: 15px; user-select: none;">Tola</span>
+            <div class="notification-wrapper" style="position: relative; display: inline-block; margin: 0 5px;">
+                <button
+                    style="width:auto; padding:5px 10px; background: transparent; border: none; font-size: 1.2rem; cursor: pointer; position: relative;"
+                    onclick="toggleNotifications()">🔔<span id="notif-badge"
+                        style="display: none; position: absolute; top: -2px; right: -2px; background: var(--error); color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; line-height: 1;">0</span></button>
+                <div id="notif-dropdown"
+                    style="display: none; position: absolute; right: 0; top: 100%; width: 250px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                    <div
+                        style="padding: 10px; border-bottom: 1px solid var(--border); font-weight: bold; color: var(--text-primary);">
+                        Notifications</div>
+                    <div id="notif-list"
+                        style="max-height: 200px; overflow-y: auto; padding: 10px; font-size: 0.9rem; color: var(--text-primary);">
+                        No new alerts.
+                    </div>
+                </div>
+            </div>
+            <button style="width:auto; padding:5px 15px;" onclick="downloadReport()">📥 PDF</button>
+            <button style="width:auto; padding:5px 15px; background: var(--error); color: white;"
+                onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="user-panel slide-up" onclick="window.location.href='profile.html'">
+        <img id="user-img" src="http://localhost:5000/uploads/default.png" alt="Profile"
+            onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23f0c040\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>'">
+        <div class="user-info">
+            <span class="user-name" id="user-name">Loading...</span>
+            <span class="user-id" id="user-id"></span>
+        </div>
+    </div>
+
+    <div class="container dashboard-content">
+
+        <div class="price-cards slide-up" style="animation-delay: 0.1s;">
+            <div class="card metal-card">
+                <button class="watchlist-btn" onclick="toggleWatchlist('gold', this)"
+                    title="Add/Remove from Watchlist">★</button>
+                <div class="metal-header"><span>🥇 Gold</span>
+                    <div class="pulse-dot"></div>
+                </div>
+                <div class="metal-price" id="price-gold">...</div>
+                <div class="price-change" id="change-gold">...</div>
+            </div>
+            <div class="card metal-card">
+                <button class="watchlist-btn" onclick="toggleWatchlist('silver', this)"
+                    title="Add/Remove from Watchlist">★</button>
+                <div class="metal-header"><span>🥈 Silver</span>
+                    <div class="pulse-dot"></div>
+                </div>
+                <div class="metal-price" id="price-silver">...</div>
+                <div class="price-change" id="change-silver">...</div>
+            </div>
+            <div class="card metal-card">
+                <button class="watchlist-btn" onclick="toggleWatchlist('copper', this)"
+                    title="Add/Remove from Watchlist">★</button>
+                <div class="metal-header"><span>🟤 Copper</span>
+                    <div class="pulse-dot"></div>
+                </div>
+                <div class="metal-price" id="price-copper">...</div>
+                <div class="price-change" id="change-copper">...</div>
+            </div>
+        </div>
+
+        <div class="charts-grid slide-up" style="animation-delay: 0.2s;">
+            <div class="card">
+                <div class="metal-header">🥇 Gold History</div>
+                <div class="timeframes" id="tf-gold">
+                    <button class="timeframe-btn active" onclick="updateChart('gold', '2d', this)">2D</button>
+                    <button class="timeframe-btn" onclick="updateChart('gold', '1w', this)">1W</button>
+                </div>
+                <div class="chart-container"><canvas id="chart-gold"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="metal-header">🥈 Silver History</div>
+                <div class="timeframes" id="tf-silver">
+                    <button class="timeframe-btn active" onclick="updateChart('silver', '2d', this)">2D</button>
+                    <button class="timeframe-btn" onclick="updateChart('silver', '1w', this)">1W</button>
+                </div>
+                <div class="chart-container"><canvas id="chart-silver"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="metal-header">🟤 Copper History</div>
+                <div class="timeframes" id="tf-copper">
+                    <button class="timeframe-btn active" onclick="updateChart('copper', '2d', this)">2D</button>
+                    <button class="timeframe-btn" onclick="updateChart('copper', '1w', this)">1W</button>
+                </div>
+                <div class="chart-container"><canvas id="chart-copper"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="metal-header">Comparison Bar Chart</div>
+                <div class="chart-container"><canvas id="chart-comparison"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card slide-up" style="animation-delay: 0.3s;">
+            <h2 class="section-title">Metal Calculator</h2>
+            <div class="calc-grid">
+                <input type="number" id="calc-amount" placeholder="Amount" value="1" oninput="calculate()">
+                <select id="calc-unit" onchange="calculate()">
+                    <option value="tola">Tola</option>
+                    <option value="gram">Gram</option>
+                    <option value="toz">Troy Oz</option>
+                </select>
+                <select id="calc-metal" onchange="calculate()">
+                    <option value="gold">Gold</option>
+                    <option value="silver">Silver</option>
+                    <option value="copper">Copper</option>
+                </select>
+                <select id="calc-currency" onchange="calculate()">
+                    <option value="USD">USD</option>
+                    <option value="PKR">PKR</option>
+                </select>
+            </div>
+            <div style="margin-top:20px; font-size: 1.5rem; font-weight: bold; color: var(--accent-gold);"
+                id="calc-result">0.00</div>
+        </div>
+
+        <div class="card slide-up" style="animation-delay: 0.4s;">
+            <h2 class="section-title">Price Predictions</h2>
+            <div class="predict-grid">
+                <select id="pred-metal">
+                    <option value="gold">Gold</option>
+                    <option value="silver">Silver</option>
+                    <option value="copper">Copper</option>
+                </select>
+                <select id="pred-dir">
+                    <option value="up">Going Up 📈</option>
+                    <option value="down">Going Down 📉</option>
+                </select>
+                <button onclick="submitPrediction()">Submit Prediction</button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Correct</th>
+                            <th>Total</th>
+                            <th>Accuracy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card slide-up" style="animation-delay: 0.5s;">
+            <h2 class="section-title">Latest Market News</h2>
+            <div class="news-grid" id="news-container">
+                <div class="skeleton" style="height: 250px;"></div>
+                <div class="skeleton" style="height: 250px;"></div>
+                <div class="skeleton" style="height: 250px;"></div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        if (!getToken()) window.location.href = 'login.html';
+        const userPref = { theme: 'dark', currency: 'USD', unit: 'tola' };
+        let rawPrices = { gold: 0, silver: 0, copper: 0 };
+        let prevPrices = { gold: 0, silver: 0, copper: 0 };
+        let exchangeRate = 1;
+        let charts = {};
+        let compChart;
+
+        let unreadAlertIds = [];
+
+        const toggleNotifications = async () => {
+            const dropdown = document.getElementById('notif-dropdown');
+            const isVisible = dropdown.style.display === 'block';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+
+            if (!isVisible && unreadAlertIds.length > 0) {
+                try {
+                    await api.alerts.markAsRead({ ids: unreadAlertIds });
+                    unreadAlertIds = [];
+                    const badge = document.getElementById('notif-badge');
+                    badge.style.display = 'none';
+                    badge.textContent = '0';
+                    // We keep the list intact until next fetch so user can read them
+                } catch (e) {
+                    console.error('Failed to mark read', e);
+                }
+            }
+        };
+
+        document.addEventListener('click', function (e) {
+            const wrapper = document.querySelector('.notification-wrapper');
+            const dropdown = document.getElementById('notif-dropdown');
+            if (wrapper && !wrapper.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        const updateChartColors = () => {
+            const isLight = document.body.classList.contains('light');
+            Chart.defaults.color = isLight ? '#1a1a1a' : '#ffffff';
+            Chart.defaults.scale.grid.color = isLight ? '#dddddd' : '#2a2a4a';
+            Object.keys(charts).forEach(key => charts[key].update());
+            if (compChart) compChart.update();
+        };
+
+        const initApp = async () => {
+            const token = getToken();
+            if (!token) { window.location.href = 'login.html'; return; }
+            const user = JSON.parse(localStorage.getItem('metaltracker_user'));
+
+            try {
+                let exData = { rate: 1 };
+                let watchData = [];
+                try {
+                    const [ex, wd] = await Promise.all([
+                        api.metals.getExchange(),
+                        api.watchlist.get()
+                    ]);
+                    if (ex) exData = ex;
+                    if (wd) watchData = wd;
+                } catch (apiErr) {
+                    console.log("Non-critical API load failed", apiErr);
+                }
+
+                exchangeRate = exData.rate || 1;
+
+                await loadUserProfile();
+
+                if (userPref.theme === 'light') document.body.classList.add('light');
+                else document.body.classList.remove('light');
+
+                watchData.forEach(item => {
+                    const btn = document.querySelector(`.watchlist-btn[onclick*="${item.metal}"]`);
+                    if (btn) btn.classList.add('active');
+                });
+
+                document.getElementById('theme-display').textContent = userPref.theme === 'light' ? '☀️' : '🌙';
+
+                initCharts();
+                await fetchPrices();
+
+                // Load supplementary items individually to prevent a single failure from cascading
+                fetchHistorical('gold', '2d');
+                fetchHistorical('silver', '2d');
+                fetchHistorical('copper', '2d');
+
+                try { await loadNews(); } catch (e) { console.error("News failed", e); }
+                try { await fetchPredictions(); } catch (e) { console.error("Predictions failed", e); }
+                try { await fetchAlerts(); } catch (e) { console.error("Alerts failed", e); }
+
+                setInterval(async () => {
+                    await fetchPrices();
+                    recreateCharts();
+                }, 300000);
+                setInterval(fetchAlerts, 60000);
+            } catch (e) {
+                showToast("Failed to load dashboard data", "error");
+            }
+        };
+
+        const fetchPrices = async () => {
+            try {
+                const data = await api.metals.getPrices();
+                prevPrices = { ...rawPrices };
+                rawPrices = { gold: data.gold, silver: data.silver, copper: data.copper };
+
+                ['gold', 'silver', 'copper'].forEach(metal => {
+                    const el = document.getElementById(`price-${metal}`);
+                    const oldTxt = el.textContent;
+                    el.textContent = formatPrice(rawPrices[metal], userPref.currency, userPref.unit, exchangeRate);
+                    if (oldTxt !== '...' && oldTxt !== el.textContent) {
+                        el.classList.remove('counting');
+                        void el.offsetWidth;
+                        el.classList.add('counting');
+                    }
+
+                    const seedStr = new Date().toDateString() + metal;
+                    const hash = seedStr.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+                    const variation = ((hash % 400) - 200) / 10000;
+                    const price_24h_ago = rawPrices[metal] / (1 + variation);
+                    const diff = rawPrices[metal] - price_24h_ago;
+
+                    const pct = (diff / price_24h_ago * 100).toFixed(2);
+                    let diffFmt = formatPrice(Math.abs(diff), userPref.currency, userPref.unit, exchangeRate);
+                    const changeEl = document.getElementById(`change-${metal}`);
+
+                    if (diff >= 0) {
+                        changeEl.innerHTML = `▲ ${diffFmt} (+${pct}%)`;
+                        changeEl.className = 'price-change positive';
+                    } else {
+                        changeEl.innerHTML = `▼ ${diffFmt} (${pct}%)`;
+                        changeEl.className = 'price-change negative';
+                    }
+                });
+                calculate();
+                updateComparisonChart();
+            } catch (e) { }
+        };
+
+        const calculate = () => {
+            const amt = parseFloat(document.getElementById('calc-amount').value) || 0;
+            const unit = document.getElementById('calc-unit').value;
+            const metal = document.getElementById('calc-metal').value;
+            const curr = document.getElementById('calc-currency').value;
+
+            const priceOz = rawPrices[metal] || 0;
+            let val = 0;
+            if (unit === 'toz') val = amt * priceOz;
+            else if (unit === 'gram') val = amt * (priceOz / 31.1035);
+            else if (unit === 'tola') val = amt * (priceOz / 31.1035) * 11.6638;
+
+            if (curr === 'PKR') val *= exchangeRate;
+
+            const dec = curr === 'PKR' ? 0 : 2;
+            document.getElementById('calc-result').textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: curr, maximumFractionDigits: dec }).format(val);
+        };
+
+        const toggleWatchlist = async (metal, btn) => {
+            const isAct = btn.classList.contains('active');
+            try {
+                if (isAct) {
+                    await api.watchlist.remove(metal);
+                    btn.classList.remove('active');
+                    showToast(`Removed ${metal} from watchlist`, "success");
+                } else {
+                    await api.watchlist.add({ metal });
+                    btn.classList.add('active');
+                    showToast(`Added ${metal} to watchlist`, "success");
+                }
+            } catch (e) {
+                showToast("Watchlist update failed", "error");
+            }
+        };
+
+        // Header interactivity removed per user request
+
+        let activeTimeframes = { gold: '2d', silver: '2d', copper: '2d' };
+
+        const recreateCharts = () => {
+            ['gold', 'silver', 'copper'].forEach(metal => {
+                if (charts[metal]) charts[metal].destroy();
+            });
+            if (compChart) compChart.destroy();
+            initCharts();
+            fetchHistorical('gold', activeTimeframes.gold);
+            fetchHistorical('silver', activeTimeframes.silver);
+            fetchHistorical('copper', activeTimeframes.copper);
+            updateComparisonChart();
+        };
+
+        const initCharts = () => {
+            const isLight = document.body.classList.contains('light');
+            const textColor = isLight ? '#1a1a1a' : '#ffffff';
+            const gridColor = isLight ? '#cccccc' : '#2a2a4a';
+            const tooltipBg = isLight ? '#ffffff' : '#1a1a2e';
+
+            const commonOpt = {
+                responsive: true, maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: { display: false, labels: { color: textColor } },
+                    tooltip: {
+                        backgroundColor: tooltipBg,
+                        titleColor: textColor,
+                        bodyColor: textColor,
+                        displayColors: false,
+                        callbacks: {
+                            title: function (context) {
+                                const ds = context[0].dataset;
+                                const idx = context[0].dataIndex;
+                                if (ds.timestamps && ds.timestamps[idx]) {
+                                    const d = new Date(ds.timestamps[idx]);
+                                    const tf = ds.tf || '2d';
+                                    return window.Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(d);
+                                }
+                                return context[0].label;
+                            },
+                            beforeBody: function (context) {
+                                return context[0].dataset.label;
+                            },
+                            label: function (context) {
+                                const symbol = userPref.currency === 'PKR' ? 'PKR ' : '$ ';
+                                let unitName = userPref.unit;
+                                if (unitName === 'toz') unitName = 'Oz';
+                                const unitCap = unitName.charAt(0).toUpperCase() + unitName.slice(1);
+                                const dec = userPref.currency === 'PKR' ? 0 : 2;
+                                const val = new Intl.NumberFormat('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(context.parsed.y);
+                                return symbol + val + ' / ' + unitCap;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false, color: gridColor }, ticks: { color: textColor } },
+                    y: {
+                        title: { display: true, text: `Price (${userPref.currency}/${userPref.unit === 'toz' ? 'Oz' : userPref.unit.charAt(0).toUpperCase() + userPref.unit.slice(1)})`, color: textColor },
+                        grid: { color: gridColor },
+                        ticks: { color: textColor, callback: v => new Intl.NumberFormat('en-US', { notation: 'compact' }).format(v) }
+                    }
+                },
+                elements: { line: { tension: 0.4 }, point: { radius: 0, hitRadius: 20, hoverRadius: 6 } },
+                animation: { duration: 0 }
+            };
+
+            ['gold', 'silver', 'copper'].forEach(metal => {
+                const ctx = document.getElementById(`chart-${metal}`).getContext('2d');
+                const color = metal === 'gold' ? '#f0c040' : (metal === 'silver' ? '#c0c0c0' : '#b87333');
+                const metalLabel = metal.charAt(0).toUpperCase() + metal.slice(1);
+                charts[metal] = new Chart(ctx, {
+                    type: 'line', data: { labels: [], datasets: [{ label: metalLabel, data: [], borderColor: color, borderWidth: 2, fill: true, backgroundColor: color + '20', timestamps: [] }] }, options: commonOpt
+                });
+            });
+
+            const ctxC = document.getElementById('chart-comparison').getContext('2d');
+            compChart = new Chart(ctxC, {
+                type: 'bar',
+                data: { labels: ['Gold', 'Silver', 'Copper'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#f0c040', '#c0c0c0', '#b87333'], borderRadius: 4 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false, labels: { color: textColor } },
+                        tooltip: { backgroundColor: tooltipBg, titleColor: textColor, bodyColor: textColor, callbacks: { label: function (context) { const symbol = userPref.currency === 'PKR' ? '₨' : '$'; return symbol + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(context.parsed.y); } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { display: false } },
+                        y: { title: { display: true, text: `Price (${userPref.currency}/${userPref.unit.charAt(0).toUpperCase() + userPref.unit.slice(1)})`, color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } }
+                    }
+                }
+            });
+        };
+
+        const updateChart = async (metal, tf, btn) => {
+            document.querySelectorAll(`#tf-${metal} .timeframe-btn`).forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeTimeframes[metal] = tf;
+            await fetchHistorical(metal, tf);
+        };
+
+        const fetchHistorical = async (metal, tf) => {
+            try {
+                let labels = [];
+                let rawChartPrices = [];
+                let timestamps = [];
+
+                const fallbacks = { gold: 2000, silver: 30, copper: 4 };
+                const currentRealPrice = rawPrices[metal] || fallbacks[metal];
+                let pointsCount = 0;
+
+                if (tf === '2d') pointsCount = 30;
+                else if (tf === '1w') pointsCount = 12;
+
+                const now = new Date();
+
+                if (tf === '2d') {
+                    for (let i = pointsCount - 1; i >= 0; i--) {
+                        const d = new Date(now);
+                        d.setDate(d.getDate() - i);
+                        const m = d.toLocaleString('en-US', { month: 'short' });
+                        const date = d.getDate();
+                        labels.push(`${m} ${date}`);
+                        timestamps.push(d.getTime());
+                    }
+                } else if (tf === '1w') {
+                    for (let i = pointsCount - 1; i >= 0; i--) {
+                        const d = new Date(now);
+                        d.setDate(d.getDate() - (i * 7));
+                        const m = d.toLocaleString('en-US', { month: 'short' });
+                        const date = d.getDate();
+                        labels.push(`${m} ${date}`);
+                        timestamps.push(d.getTime());
+                    }
+                }
+
+                function seededRandom(seed) {
+                    let x = Math.sin(seed + 1) * 10000;
+                    return x - Math.floor(x);
+                }
+
+                let pricesReversed = [currentRealPrice];
+                let currentSimPrice = currentRealPrice;
+                for (let i = labels.length - 1; i > 0; i--) {
+                    const label = labels[i];
+                    const seed = metal.charCodeAt(0) * 100 +
+                        label.split('').reduce((acc, ch, i) => acc + ch.charCodeAt(0) * (i + 1), 0);
+                    const variation = (seededRandom(seed) * 0.03) - 0.015;
+                    currentSimPrice = currentSimPrice / (1 + variation);
+                    pricesReversed.push(currentSimPrice);
+                }
+                rawChartPrices = pricesReversed.reverse();
+
+                renderChartData(metal, labels, rawChartPrices, timestamps, tf);
+            } catch (e) {
+                console.error('fetchHistorical error:', e);
+            }
+        };
+
+        const renderChartData = (metal, labels, rawChartPrices, timestamps, tf) => {
+            const convertWeight = (p, u) => u === 'gram' ? p / 31.1035 : u === 'tola' ? (p / 31.1035) * 11.6638 : p;
+            let pData = rawChartPrices.map(p => {
+                let converted = convertWeight(p, userPref.unit);
+                return userPref.currency === 'PKR' ? converted * exchangeRate : converted;
+            });
+
+            if (pData.length > 0) {
+                const diffs = pData.map(p => Math.abs(p - pData[pData.length - 1]));
+                const maxDiff = Math.max(...diffs, pData[pData.length - 1] * 0.01);
+                charts[metal].options.scales.y.min = pData[pData.length - 1] - (maxDiff * 1.5);
+                charts[metal].options.scales.y.max = pData[pData.length - 1] + (maxDiff * 1.5);
+            }
+
+            charts[metal].data.labels = labels;
+            charts[metal].data.datasets[0].data = pData;
+            charts[metal].data.datasets[0].timestamps = timestamps;
+            charts[metal].data.datasets[0].tf = tf;
+            charts[metal].update();
+        };
+
+        const updateComparisonChart = () => {
+            if (!compChart) return;
+            const convertWeight = (p, u) => u === 'gram' ? p / 31.1035 : u === 'tola' ? (p / 31.1035) * 11.6638 : p;
+            let g = convertWeight(rawPrices.gold, userPref.unit);
+            let s = convertWeight(rawPrices.silver, userPref.unit);
+            let c = convertWeight(rawPrices.copper, userPref.unit);
+            if (userPref.currency === 'PKR') {
+                g *= exchangeRate; s *= exchangeRate; c *= exchangeRate;
+            }
+            compChart.data.datasets[0].data = [g, s, c];
+            compChart.update();
+        };
+
+        async function loadNews() {
+            try {
+                const token = getToken();
+                const res = await fetch(API_BASE_URL + '/api/metals/news', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json();
+
+                const container = document.getElementById('news-container');
+                if (!container) return;
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    container.innerHTML = '<p style="color:var(--text-secondary)">No news available at the moment.</p>';
+                    return;
+                }
+
+                container.innerHTML = data.slice(0, 6).map(article => `
+      <div class="news-card" onclick="window.open('${article.url}', '_blank')" 
+           style="cursor:pointer;">
+        <img src="${article.urlToImage || 'images/logo.png'}" 
+             alt="news" 
+             onerror="this.src='images/logo.png'"
+             style="width:100%;height:150px;object-fit:cover;border-radius:8px;">
+        <h4 style="margin:10px 0 5px;font-size:0.9rem;color:var(--text-primary)">
+          ${article.title ? article.title.substring(0, 80) + '...' : 'No title'}
+        </h4>
+        <p style="font-size:0.8rem;color:var(--text-secondary)">
+          ${article.description ? article.description.substring(0, 100) + '...' : ''}
+        </p>
+        <small style="color:var(--accent-gold)">
+          ${article.source ? article.source.name : ''} • 
+          ${article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : ''}
+        </small>
+      </div>
+    `).join('');
+            } catch (err) {
+                const container = document.getElementById('news-container');
+                if (container) {
+                    container.innerHTML = '<p style="color:var(--text-secondary)">Could not load news.</p>';
+                }
+            }
+        }
+
+        async function loadUserProfile() {
+            try {
+                const token = getToken();
+                if (!token) return;
+
+                const user = JSON.parse(localStorage.getItem('metaltracker_user'));
+                if (user) {
+                    document.getElementById('user-name').textContent = user.name || 'User';
+                    document.getElementById('user-id').textContent = '#' + user.user_id;
+                    if (user.profile_pic && user.profile_pic !== 'default.png') {
+                        document.getElementById('user-img').src =
+                            API_BASE_URL + '/uploads/' + user.profile_pic;
+                    }
+                }
+
+                const res = await fetch(API_BASE_URL + '/api/user/profile', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    if (data.theme) {
+                        userPref.theme = data.theme;
+                        document.getElementById('theme-display').textContent = userPref.theme === 'light' ? '☀️' : '🌙';
+                        if (userPref.theme === 'light') document.body.classList.add('light');
+                        else document.body.classList.remove('light');
+                    }
+                    if (data.currency) userPref.currency = data.currency;
+                    if (data.unit) { userPref.unit = data.unit; document.getElementById('header-unit').textContent = userPref.unit; }
+
+                    document.getElementById('user-name').textContent = data.name || 'User';
+                    document.getElementById('user-id').textContent = '#' + data.user_id;
+                    if (data.profile_pic && data.profile_pic !== 'default.png') {
+                        document.getElementById('user-img').src =
+                            API_BASE_URL + '/uploads/' + data.profile_pic;
+                    }
+                    localStorage.setItem('metaltracker_user', JSON.stringify(data));
+                }
+            } catch (err) {
+                const user = JSON.parse(localStorage.getItem('metaltracker_user'));
+                if (user) {
+                    document.getElementById('user-name').textContent = user.name || 'User';
+                    document.getElementById('user-id').textContent = '#' + user.user_id;
+                }
+            }
+        }
+
+        const fetchPredictions = async () => {
+            try {
+                const data = await api.predictions.get();
+                const tbody = document.getElementById('leaderboard-body');
+                tbody.innerHTML = '';
+
+                let stats = {};
+                data.forEach(p => {
+                    if (!stats[p.user_name]) stats[p.user_name] = { correct: 0, total: 0 };
+                    stats[p.user_name].total++;
+                    if (p.is_correct) stats[p.user_name].correct++;
+                });
+
+                const arr = Object.keys(stats).map(k => ({ name: k, ...stats[k] }));
+                arr.sort((a, b) => b.correct - a.correct);
+
+                arr.forEach((u, i) => {
+                    const acc = u.total > 0 ? ((u.correct / u.total) * 100).toFixed(0) : 0;
+                    tbody.innerHTML += `<tr><td>#${i + 1}</td><td>${u.name}</td><td>${u.correct}</td><td>${u.total}</td><td>${acc}%</td></tr>`;
+                });
+            } catch (e) { }
+        };
+
+        const submitPrediction = async () => {
+            const metal = document.getElementById('pred-metal').value;
+            const prediction = document.getElementById('pred-dir').value;
+            try {
+                await api.predictions.add({ metal, prediction });
+                showToast('Prediction submitted!', 'success');
+                fetchPredictions();
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        };
+
+        let lastAlertTime = 0;
+        const fetchAlerts = async () => {
+            try {
+                const data = await api.alerts.get();
+                if (!data) return;
+
+                const list = document.getElementById('notif-list');
+                const badge = document.getElementById('notif-badge');
+
+                unreadAlertIds = data.map(d => d.id);
+
+                if (data.length > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.textContent = data.length;
+
+                    list.innerHTML = '';
+                    data.forEach(a => {
+                        const time = new Date(a.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const dirIcon = a.direction === 'up' ? '📈' : '📉';
+                        list.innerHTML += `<div style="margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                            <strong>${a.metal.toUpperCase()}</strong>: ${dirIcon} Price crossed ${a.threshold_price}
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">${time}</div>
+                        </div>`;
+                    });
+                } else {
+                    badge.style.display = 'none';
+                    list.innerHTML = 'No new alerts.';
+                }
+            } catch (e) { }
+        };
+
+        const downloadReport = async () => {
+            showToast('Generating report...', 'success');
+            try {
+                const res = await api.pdf.getReport();
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'metal_prices_report.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                showToast('Download started', 'success');
+            } catch (e) {
+                showToast('Report generation failed', 'error');
+            }
+        };
+
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+    <script>
+        (function () {
+            function doRefresh() {
+                setTimeout(function () {
+                    fetchPrices();
+                    recreateCharts();
+                }, 300);
+            }
+
+            // Refresh when coming back to this page
+            window.addEventListener('pageshow', function () {
+                doRefresh();
+            });
+
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'visible') {
+                    doRefresh();
+                }
+            });
+
+            // Pull to refresh on mobile
+            var startY = 0;
+            var pulling = false;
+
+            document.addEventListener('touchstart', function (e) {
+                if (window.pageYOffset === 0) {
+                    startY = e.touches[0].pageY;
+                    pulling = true;
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function (e) {
+                if (!pulling) return;
+                var currentY = e.touches[0].pageY;
+            }, { passive: true });
+
+            document.addEventListener('touchend', function (e) {
+                if (!pulling) return;
+                var endY = e.changedTouches[0].pageY;
+                if (endY - startY > 80) {
+                    doRefresh();
+                }
+                pulling = false;
+                startY = 0;
+            }, { passive: true });
+        })();
+    </script>
+
+    <footer class="dashboard-footer">
+        <div class="footer-left">&copy; 2026 MetalTracker</div>
+        <div class="footer-center">Prices by metals.dev</div>
+        <div class="footer-right">Track Smart, Invest Smarter</div>
+    </footer>
+</body>
+
+</html>

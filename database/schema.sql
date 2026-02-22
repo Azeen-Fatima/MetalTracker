@@ -1,0 +1,58 @@
+CREATE DATABASE metaltracker;
+USE metaltracker;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(10) UNIQUE NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  profile_pic VARCHAR(255) DEFAULT 'default.png',
+  theme VARCHAR(50) DEFAULT 'dark',
+  currency VARCHAR(10) DEFAULT 'USD',
+  unit VARCHAR(50) DEFAULT 'tola',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE verification_codes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  code VARCHAR(4) NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE price_alerts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(10) NOT NULL,
+  metal VARCHAR(50) NOT NULL,
+  threshold_price DECIMAL(10, 2) NOT NULL,
+  direction VARCHAR(10) NOT NULL,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE watchlist (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(10) NOT NULL,
+  metal VARCHAR(50) NOT NULL,
+  notify BOOLEAN DEFAULT true
+);
+
+CREATE TABLE price_predictions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(10) NOT NULL,
+  metal VARCHAR(50) NOT NULL,
+  prediction VARCHAR(255) NOT NULL,
+  price_at_prediction DECIMAL(10, 2) NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE leaderboard (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(10) NOT NULL,
+  correct_predictions INT DEFAULT 0,
+  total_predictions INT DEFAULT 0
+);
