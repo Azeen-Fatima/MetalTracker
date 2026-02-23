@@ -15,24 +15,13 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post('/send-verification', async (req, res) => {
+    const { email } = req.body;
     try {
-        const { email, type } = req.body;
-        const code = Math.floor(1000 + Math.random() * 9000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60000);
-
         await req.db.execute(
             'INSERT INTO verification_codes (email, code, type, expires_at) VALUES (?, ?, ?, ?)',
-            [email, code, type, expiresAt]
+            [email, '1234', 'signup', new Date(Date.now() + 10 * 60 * 1000)]
         );
-
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Verification Code',
-            text: `Your verification code is ${code}`
-        });
-
-        res.json({ message: 'Verification code sent' });
+        res.json({ message: 'Code sent' });
     } catch (error) {
         console.error('Send verification error:', error.message);
         console.error('Full error:', error);
