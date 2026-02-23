@@ -32,7 +32,9 @@ router.post('/send-verification', async (req, res) => {
 
         res.json({ message: 'Verification code sent' });
     } catch (error) {
-        res.status(500).json({ error: 'Server error' });
+        console.error('Send verification error:', error.message);
+        console.error('Full error:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
