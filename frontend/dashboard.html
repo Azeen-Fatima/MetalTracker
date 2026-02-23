@@ -572,7 +572,7 @@
                 if (!container) return;
 
                 if (!Array.isArray(data) || data.length === 0) {
-                    container.innerHTML = '<p style="color:var(--text-secondary)">No news available at the moment.</p>';
+                    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-secondary); font-size:1.1rem;">📰 No latest news available at the moment.</div>';
                     return;
                 }
 
@@ -598,7 +598,7 @@
             } catch (err) {
                 const container = document.getElementById('news-container');
                 if (container) {
-                    container.innerHTML = '<p style="color:var(--text-secondary)">Could not load news.</p>';
+                    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-secondary); font-size:1.1rem;">📰 No latest news available at the moment.</div>';
                 }
             }
         }
@@ -612,10 +612,12 @@
                 if (user) {
                     document.getElementById('user-name').textContent = user.name || 'User';
                     document.getElementById('user-id').textContent = '#' + user.user_id;
-                    if (user.profile_pic && user.profile_pic !== 'default.png') {
-                        document.getElementById('user-img').src =
-                            API_BASE_URL + '/uploads/' + user.profile_pic;
-                    }
+                    const imgSrc = user.profile_pic && user.profile_pic.startsWith('http')
+                        ? user.profile_pic
+                        : user.profile_pic && user.profile_pic !== 'default.png'
+                            ? API_BASE_URL + '/uploads/' + user.profile_pic
+                            : null;
+                    if (imgSrc) document.getElementById('user-img').src = imgSrc;
                 }
 
                 const res = await fetch(API_BASE_URL + '/api/user/profile', {
@@ -634,10 +636,12 @@
 
                     document.getElementById('user-name').textContent = data.name || 'User';
                     document.getElementById('user-id').textContent = '#' + data.user_id;
-                    if (data.profile_pic && data.profile_pic !== 'default.png') {
-                        document.getElementById('user-img').src =
-                            API_BASE_URL + '/uploads/' + data.profile_pic;
-                    }
+                    const imgSrc = data.profile_pic && data.profile_pic.startsWith('http')
+                        ? data.profile_pic
+                        : data.profile_pic && data.profile_pic !== 'default.png'
+                            ? API_BASE_URL + '/uploads/' + data.profile_pic
+                            : null;
+                    if (imgSrc) document.getElementById('user-img').src = imgSrc;
                     localStorage.setItem('metaltracker_user', JSON.stringify(data));
                 }
             } catch (err) {

@@ -297,7 +297,12 @@
 
                 const data = await res.json();
                 if (res.ok) {
-                    document.getElementById('profile-img').src = data.profile_pic || `${API_BASE_URL}/uploads/${data.filename}?t=${new Date().getTime()}`;
+                    document.getElementById('profile-img').src = data.profile_pic + '?t=' + new Date().getTime();
+
+                    const savedUser = JSON.parse(localStorage.getItem('metaltracker_user')) || {};
+                    savedUser.profile_pic = data.profile_pic;
+                    localStorage.setItem('metaltracker_user', JSON.stringify(savedUser));
+
                     showToast('Profile picture updated!', 'success');
                 } else {
                     showToast(data.error || 'Upload failed', 'error');

@@ -1,13 +1,15 @@
 .dashboard-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 15px;
     background-color: var(--bg-card);
     border-bottom: 1px solid var(--border);
     position: relative;
     z-index: 1001;
-    /* Fixes overlap issue with slide-up elements */
 }
 
 .logo {
@@ -21,8 +23,20 @@
 
 .header-right {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 15px;
+    gap: 5px;
+}
+
+@media (max-width: 600px) {
+    .dashboard-header {
+        padding: 8px 10px;
+    }
+
+    .header-right button {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
 }
 
 .user-panel {
@@ -65,9 +79,11 @@
 }
 
 .price-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .metal-card {
@@ -75,6 +91,18 @@
     flex-direction: column;
     gap: 10px;
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+    .price-cards {
+        flex-direction: row;
+    }
+
+    .metal-card {
+        flex: 1;
+    }
 }
 
 .metal-header {
