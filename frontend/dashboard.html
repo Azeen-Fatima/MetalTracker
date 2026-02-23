@@ -172,7 +172,9 @@
         <div class="card slide-up" style="animation-delay: 0.5s;">
             <h2 class="section-title">Latest Market News</h2>
             <div class="news-grid" id="news-container">
-                <p style="color:var(--text-secondary); text-align:center; padding:20px;">Loading news...</p>
+                <p style="color:var(--text-secondary); text-align:center; padding:30px; font-size:1rem;">
+                    📰 Market news currently unavailable. Check back later!
+                </p>
             </div>
         </div>
 
@@ -570,7 +572,7 @@
                 if (!container) return;
 
                 if (!Array.isArray(data) || data.length === 0) {
-                    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-secondary); font-size:1.1rem;">📰 No latest news available at the moment.</div>';
+                    container.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding:30px; font-size:1rem;">📰 Market news currently unavailable. Check back later!</p>';
                     return;
                 }
 
@@ -596,7 +598,7 @@
             } catch (err) {
                 const container = document.getElementById('news-container');
                 if (container) {
-                    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-secondary); font-size:1.1rem;">📰 No latest news available at the moment.</div>';
+                    container.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding:30px; font-size:1rem;">📰 Market news currently unavailable. Check back later!</p>';
                 }
             }
         }
