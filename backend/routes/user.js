@@ -149,7 +149,8 @@ router.post('/upload-pic', upload.single('profile_pic'), async (req, res) => {
         await req.db.execute('UPDATE users SET profile_pic = ? WHERE id = ?', [imageUrl, req.user.id]);
         res.json({
             message: 'Profile updated',
-            profile_pic: imageUrl
+            profile_pic: imageUrl,
+            filename: imageUrl
         });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
