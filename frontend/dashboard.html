@@ -172,9 +172,7 @@
         <div class="card slide-up" style="animation-delay: 0.5s;">
             <h2 class="section-title">Latest Market News</h2>
             <div class="news-grid" id="news-container">
-                <div class="skeleton" style="height: 250px;"></div>
-                <div class="skeleton" style="height: 250px;"></div>
-                <div class="skeleton" style="height: 250px;"></div>
+                <p style="color:var(--text-secondary); text-align:center; padding:20px;">Loading news...</p>
             </div>
         </div>
 
@@ -612,12 +610,11 @@
                 if (user) {
                     document.getElementById('user-name').textContent = user.name || 'User';
                     document.getElementById('user-id').textContent = '#' + user.user_id;
-                    const imgSrc = user.profile_pic && user.profile_pic.startsWith('http')
-                        ? user.profile_pic
-                        : user.profile_pic && user.profile_pic !== 'default.png'
-                            ? API_BASE_URL + '/uploads/' + user.profile_pic
-                            : null;
-                    if (imgSrc) document.getElementById('user-img').src = imgSrc;
+                    if (user.profile_pic) {
+                        const picUrl = user.profile_pic.startsWith('http') ?
+                            user.profile_pic : API_BASE_URL + '/uploads/' + user.profile_pic;
+                        document.getElementById('user-img').src = picUrl;
+                    }
                 }
 
                 const res = await fetch(API_BASE_URL + '/api/user/profile', {
@@ -636,12 +633,11 @@
 
                     document.getElementById('user-name').textContent = data.name || 'User';
                     document.getElementById('user-id').textContent = '#' + data.user_id;
-                    const imgSrc = data.profile_pic && data.profile_pic.startsWith('http')
-                        ? data.profile_pic
-                        : data.profile_pic && data.profile_pic !== 'default.png'
-                            ? API_BASE_URL + '/uploads/' + data.profile_pic
-                            : null;
-                    if (imgSrc) document.getElementById('user-img').src = imgSrc;
+                    if (data.profile_pic) {
+                        const picUrl = data.profile_pic.startsWith('http') ?
+                            data.profile_pic : API_BASE_URL + '/uploads/' + data.profile_pic;
+                        document.getElementById('user-img').src = picUrl;
+                    }
                     localStorage.setItem('metaltracker_user', JSON.stringify(data));
                 }
             } catch (err) {

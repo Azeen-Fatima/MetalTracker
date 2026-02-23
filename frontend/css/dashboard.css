@@ -1,3 +1,12 @@
+body,
+html {
+    overflow-x: hidden;
+}
+
+body {
+    min-width: 320px;
+}
+
 .dashboard-header {
     display: flex;
     flex-wrap: wrap;
@@ -180,6 +189,12 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .chart-container {
