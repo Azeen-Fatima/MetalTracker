@@ -284,7 +284,7 @@
                 // Cannot use standard api.post because it stringifies JSON. Need a custom fetch or api extension.
                 // Or just use fetch directly with token
                 const token = getToken();
-                const res = await fetch(`http://localhost:5000/api/user/upload-pic`, {
+                const res = await fetch(`${API_BASE_URL}/api/user/upload-pic`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` },
                     body: formData
@@ -297,7 +297,7 @@
 
                 const data = await res.json();
                 if (res.ok) {
-                    document.getElementById('profile-img').src = `http://localhost:5000/uploads/${data.filename}?t=${new Date().getTime()}`;
+                    document.getElementById('profile-img').src = data.profile_pic || `${API_BASE_URL}/uploads/${data.filename}?t=${new Date().getTime()}`;
                     showToast('Profile picture updated!', 'success');
                 } else {
                     showToast(data.error || 'Upload failed', 'error');

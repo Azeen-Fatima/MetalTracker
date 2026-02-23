@@ -138,13 +138,19 @@ router.put('/confirm-email-change', async (req, res) => {
 });
 
 router.post('/upload-pic', upload.single('profile_pic'), async (req, res) => {
+    console.log('Upload route hit');
+    console.log('File:', req.file);
+    console.log('User:', req.user);
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
         const imageUrl = req.file.path;
         await req.db.execute('UPDATE users SET profile_pic = ? WHERE id = ?', [imageUrl, req.user.id]);
-        res.json({ message: 'Profile picture updated', filename: imageUrl });
+        res.json({
+            message: 'Profile updated',
+            profile_pic: imageUrl
+        });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
