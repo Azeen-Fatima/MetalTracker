@@ -6,16 +6,24 @@ const path = require('path');
 const auth = require('../middleware/auth');
 const nodemailer = require('nodemailer');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../uploads'));
-    },
-    filename: (req, file, cb) => {
-        cb(null, req.user.user_id + '_' + Date.now() + path.extname(file.originalname));
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'metaltracker',
+        allowed_formats: ['jpg', 'jpeg', 'png']
     }
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -134,8 +142,9 @@ router.post('/upload-pic', upload.single('profile_pic'), async (req, res) => {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
-        await req.db.execute('UPDATE users SET profile_pic = ? WHERE id = ?', [req.file.filename, req.user.id]);
-        res.json({ message: 'Profile picture updated', filename: req.file.filename });
+        const imageUrl = req.file.path;
+        await req.db.execute('UPDATE users SET profile_pic = ? WHERE id = ?', [imageUrl, req.user.id]);
+        res.json({ message: 'Profile picture updated', filename: imageUrl });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
