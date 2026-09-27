@@ -239,6 +239,7 @@
             const token = getToken();
             if (!token) { window.location.href = 'login.html'; return; }
             const user = JSON.parse(localStorage.getItem('metaltracker_user'));
+            if (user && user.theme === 'light') document.body.classList.add('light');
 
             try {
                 let exData = { rate: 1 };
