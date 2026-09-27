@@ -106,11 +106,7 @@ router.post('/send-email-change', async (req, res) => {
         );
 
         await transporter.sendMail({
-<<<<<<< HEAD
             from: process.env.EMAIL_FROM,
-=======
-            from: process.env.EMAIL_USER,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             to: newEmail,
             subject: 'Email Change Verification Code',
             text: `Your verification code is ${code}`
@@ -126,11 +122,7 @@ router.put('/confirm-email-change', async (req, res) => {
     try {
         const { newEmail, code } = req.body;
         const [rows] = await req.db.execute(
-<<<<<<< HEAD
             'SELECT * FROM verification_codes WHERE email = ? AND code = ? AND type = \'email_change\' AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1',
-=======
-            'SELECT * FROM verification_codes WHERE email = ? AND code = ? AND type = "email_change" AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1',
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             [newEmail, code]
         );
 

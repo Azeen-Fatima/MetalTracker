@@ -150,7 +150,6 @@
             border-color: var(--accent-gold);
             background: rgba(240, 192, 64, 0.1);
         }
-<<<<<<< HEAD
 
         .profile-pic-wrapper:active .overlay,
         .profile-pic-wrapper:focus-within .overlay {
@@ -171,8 +170,6 @@
                 font-size: 1.3rem;
             }
         }
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
     </style>
 </head>
 
@@ -276,10 +273,6 @@
     <script src="js/api.js"></script>
     <script>
         if (!getToken()) window.location.href = 'login.html';
-<<<<<<< HEAD
-=======
-        // Use initProtectedPage to handle token checks and theme application
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         initProtectedPage();
 
         const msgProfile = document.getElementById('profile-msg');
@@ -289,38 +282,22 @@
         async function loadProfile() {
             try {
                 const data = await api.user.getProfile();
-<<<<<<< HEAD
                 if (!data) return;
-=======
-                if (!data) return; // handled by api wrapper
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
 
                 document.getElementById('display-name').textContent = data.name;
                 document.getElementById('display-email').textContent = data.email;
                 document.getElementById('name-input').value = data.name;
 
-<<<<<<< HEAD
-=======
-                // Set profile picture src
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                 if (data.profile_pic) {
                     const picUrl = data.profile_pic.startsWith('http') ?
                         data.profile_pic : API_BASE_URL + '/uploads/' + data.profile_pic;
                     document.getElementById('profile-img').src = picUrl;
                 }
 
-<<<<<<< HEAD
-=======
-                // Set preferences
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                 document.getElementById('theme-toggle').checked = data.theme === 'light';
                 document.getElementById('currency-select').value = data.currency;
                 document.getElementById('unit-select').value = data.unit;
 
-<<<<<<< HEAD
-=======
-                // Ensure theme matches data from server
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                 applyTheme(data.theme);
 
             } catch (err) {
@@ -336,11 +313,6 @@
             formData.append('profile_pic', file);
 
             try {
-<<<<<<< HEAD
-=======
-                // Cannot use standard api.post because it stringifies JSON. Need a custom fetch or api extension.
-                // Or just use fetch directly with token
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                 const token = getToken();
                 const res = await fetch(`${API_BASE_URL}/api/user/upload-pic`, {
                     method: 'POST',
@@ -389,10 +361,6 @@
                     msgProfile.style.color = 'var(--success)';
                     document.getElementById('display-name').textContent = name;
 
-<<<<<<< HEAD
-=======
-                    // Update user in localStorage
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                     const user = getUser();
                     user.theme = theme;
                     user.currency = currency;
@@ -415,11 +383,7 @@
         function updatePreferences() {
             const isLight = document.getElementById('theme-toggle').checked;
             applyTheme(isLight ? 'light' : 'dark');
-<<<<<<< HEAD
             saveProfile();
-=======
-            saveProfile(); // Auto-save on change
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         }
 
         async function changePassword() {
@@ -515,10 +479,6 @@
 
                     showToast('Email address changed', 'success');
 
-<<<<<<< HEAD
-=======
-                    // Clear inputs
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                     ['e1', 'e2', 'e3', 'e4'].forEach(id => document.getElementById(id).value = '');
                     pendingEmail = '';
                 }
@@ -531,10 +491,6 @@
             }
         }
 
-<<<<<<< HEAD
-=======
-        // Auto focus script for email verify
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         const inputs = ['e1', 'e2', 'e3', 'e4'];
         inputs.forEach((id, i) => {
             document.getElementById(id).addEventListener('input', function () {
@@ -545,10 +501,6 @@
             });
         });
 
-<<<<<<< HEAD
-=======
-        // Load profile data on init
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         loadProfile();
     </script>
 </body>

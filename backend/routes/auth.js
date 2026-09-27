@@ -14,7 +14,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-<<<<<<< HEAD
 const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 router.post('/send-verification', async (req, res) => {
@@ -48,33 +47,16 @@ router.post('/send-verification', async (req, res) => {
     } catch (error) {
         console.error('Send verification error:', error.message);
         res.status(500).json({ error: 'Server error' });
-=======
-router.post('/send-verification', async (req, res) => {
-    const { email } = req.body;
-    try {
-        await req.db.execute(
-            'INSERT INTO verification_codes (email, code, type, expires_at) VALUES (?, ?, ?, ?)',
-            [email, '1234', 'signup', new Date(Date.now() + 10 * 60 * 1000)]
-        );
-        res.json({ message: 'Code sent' });
-    } catch (error) {
-        console.error('Send verification error:', error.message);
-        console.error('Full error:', error);
-        res.status(500).json({ error: error.message });
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
     }
 });
 
 router.post('/verify-code', async (req, res) => {
     try {
         const { email, code, type } = req.body;
-<<<<<<< HEAD
         if (!email || !code || !type) {
             return res.status(400).json({ error: 'Email, code and type are required' });
         }
 
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         const [rows] = await req.db.execute(
             'SELECT * FROM verification_codes WHERE email = ? AND code = ? AND type = ? AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1',
             [email, code, type]
@@ -84,11 +66,8 @@ router.post('/verify-code', async (req, res) => {
             return res.status(400).json({ error: 'Invalid or expired code' });
         }
 
-<<<<<<< HEAD
         await req.db.execute('UPDATE verification_codes SET verified = TRUE WHERE id = ?', [rows[0].id]);
 
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         res.json({ message: 'Code verified' });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
@@ -99,7 +78,6 @@ router.post('/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-<<<<<<< HEAD
         if (!name || !email || !EMAIL_RE.test(email) || !password || password.length < 8 || !/\d/.test(password)) {
             return res.status(400).json({ error: 'Please provide a valid name, email and an 8+ character password with a number' });
         }
@@ -110,10 +88,6 @@ router.post('/signup', async (req, res) => {
         );
         if (verified.length === 0) {
             return res.status(400).json({ error: 'Please verify your email before signing up' });
-=======
-        if (!name || password.length < 8 || !/\d/.test(password)) {
-            return res.status(400).json({ error: 'Invalid input' });
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         }
 
         const [existingUsers] = await req.db.execute('SELECT id FROM users WHERE email = ?', [email]);
@@ -129,19 +103,13 @@ router.post('/signup', async (req, res) => {
             [userId, name, email, passwordHash]
         );
 
-<<<<<<< HEAD
         await req.db.execute('DELETE FROM verification_codes WHERE id = ?', [verified[0].id]);
 
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         const token = jwt.sign({ id: result.insertId, user_id: userId }, process.env.JWT_SECRET, { expiresIn: '5d' });
 
         res.json({ token });
     } catch (error) {
-<<<<<<< HEAD
         console.error('Signup error:', error.message);
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         res.status(500).json({ error: 'Server error' });
     }
 });

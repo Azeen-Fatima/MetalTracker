@@ -1,16 +1,8 @@
-<<<<<<< HEAD
 -- Supabase already gives you a database, so no CREATE DATABASE/USE needed here.
 -- Just run this whole file in Supabase's SQL Editor once.
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-=======
-CREATE DATABASE metaltracker;
-USE metaltracker;
-
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   user_id VARCHAR(10) UNIQUE NOT NULL,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -23,28 +15,17 @@ CREATE TABLE users (
 );
 
 CREATE TABLE verification_codes (
-<<<<<<< HEAD
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) NOT NULL,
   code VARCHAR(4) NOT NULL,
   type VARCHAR(50) NOT NULL,
   verified BOOLEAN DEFAULT false,
-=======
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  email VARCHAR(255) NOT NULL,
-  code VARCHAR(4) NOT NULL,
-  type VARCHAR(50) NOT NULL,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   expires_at TIMESTAMP NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE price_alerts (
-<<<<<<< HEAD
   id SERIAL PRIMARY KEY,
-=======
-  id INT AUTO_INCREMENT PRIMARY KEY,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   user_id VARCHAR(10) NOT NULL,
   metal VARCHAR(50) NOT NULL,
   threshold_price DECIMAL(10, 2) NOT NULL,
@@ -54,22 +35,14 @@ CREATE TABLE price_alerts (
 );
 
 CREATE TABLE watchlist (
-<<<<<<< HEAD
   id SERIAL PRIMARY KEY,
-=======
-  id INT AUTO_INCREMENT PRIMARY KEY,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   user_id VARCHAR(10) NOT NULL,
   metal VARCHAR(50) NOT NULL,
   notify BOOLEAN DEFAULT true
 );
 
 CREATE TABLE price_predictions (
-<<<<<<< HEAD
   id SERIAL PRIMARY KEY,
-=======
-  id INT AUTO_INCREMENT PRIMARY KEY,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   user_id VARCHAR(10) NOT NULL,
   metal VARCHAR(50) NOT NULL,
   prediction VARCHAR(255) NOT NULL,
@@ -79,13 +52,8 @@ CREATE TABLE price_predictions (
 );
 
 CREATE TABLE leaderboard (
-<<<<<<< HEAD
   id SERIAL PRIMARY KEY,
   user_id VARCHAR(10) UNIQUE NOT NULL,
-=======
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id VARCHAR(10) NOT NULL,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   correct_predictions INT DEFAULT 0,
   total_predictions INT DEFAULT 0
 );

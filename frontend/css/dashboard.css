@@ -102,10 +102,7 @@ body {
 .price-cards {
     display: flex;
     flex-direction: column;
-<<<<<<< HEAD
     gap: 20px;
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
     width: 100%;
     box-sizing: border-box;
 }
@@ -291,7 +288,6 @@ body {
     padding-bottom: 10px;
 }
 
-<<<<<<< HEAD
 .tools-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -314,19 +310,11 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-=======
-.calc-grid {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
 }
 
 .calc-grid input,
 .calc-grid select {
     width: 100%;
-<<<<<<< HEAD
     margin-bottom: 0;
 }
 
@@ -373,19 +361,6 @@ body {
     .predict-grid {
         grid-template-columns: 1fr;
     }
-=======
-}
-
-.predict-grid {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.predict-grid select,
-.predict-grid button {
-    width: 100%;
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
 }
 
 .table-responsive {
@@ -554,14 +529,11 @@ th {
 }
 
 @media (max-width: 480px) {
-<<<<<<< HEAD
     #notif-dropdown {
         width: min(250px, calc(100vw - 24px)) !important;
         right: -60px !important;
     }
 
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
     .dashboard-header {
         flex-direction: column;
         align-items: flex-start;

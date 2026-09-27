@@ -1,13 +1,10 @@
 require('dotenv').config();
-<<<<<<< HEAD
 
 if (!process.env.JWT_SECRET) {
   console.error('FATAL: JWT_SECRET is not set in the environment. Refusing to start with an insecure default.');
   process.exit(1);
 }
 
-=======
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -17,11 +14,7 @@ const fs = require('fs');
 async function initDatabase() {
   const statements = [
     `CREATE TABLE IF NOT EXISTS users (
-<<<<<<< HEAD
       id SERIAL PRIMARY KEY,
-=======
-      id INT AUTO_INCREMENT PRIMARY KEY,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
       user_id VARCHAR(10) UNIQUE,
       name VARCHAR(100),
       email VARCHAR(100) UNIQUE,
@@ -33,23 +26,15 @@ async function initDatabase() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
     `CREATE TABLE IF NOT EXISTS verification_codes (
-<<<<<<< HEAD
       id SERIAL PRIMARY KEY,
       email VARCHAR(100),
       code VARCHAR(4),
       type VARCHAR(20),
       verified BOOLEAN DEFAULT false,
-=======
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      email VARCHAR(100),
-      code VARCHAR(4),
-      type VARCHAR(20),
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
       expires_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
     `CREATE TABLE IF NOT EXISTS price_alerts (
-<<<<<<< HEAD
       id SERIAL PRIMARY KEY,
       user_id VARCHAR(10),
       metal VARCHAR(20),
@@ -61,29 +46,12 @@ async function initDatabase() {
     `CREATE TABLE IF NOT EXISTS watchlist (
       id SERIAL PRIMARY KEY,
       user_id VARCHAR(10),
-=======
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT,
-      metal VARCHAR(20),
-      threshold_price DECIMAL(15,2),
-      direction VARCHAR(10),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )`,
-    `CREATE TABLE IF NOT EXISTS watchlist (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
       metal VARCHAR(20),
       notify BOOLEAN DEFAULT true
     )`,
     `CREATE TABLE IF NOT EXISTS price_predictions (
-<<<<<<< HEAD
       id SERIAL PRIMARY KEY,
       user_id VARCHAR(10),
-=======
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT,
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
       metal VARCHAR(20),
       prediction VARCHAR(10),
       price_at_prediction DECIMAL(15,2),
@@ -91,7 +59,6 @@ async function initDatabase() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
     `CREATE TABLE IF NOT EXISTS leaderboard (
-<<<<<<< HEAD
       id SERIAL PRIMARY KEY,
       user_id VARCHAR(10) UNIQUE,
       correct_predictions INT DEFAULT 0,
@@ -99,13 +66,6 @@ async function initDatabase() {
     )`,
     `ALTER TABLE verification_codes ADD COLUMN IF NOT EXISTS verified BOOLEAN DEFAULT false`,
     `ALTER TABLE price_alerts ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false`
-=======
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT UNIQUE,
-      correct_predictions INT DEFAULT 0,
-      total_predictions INT DEFAULT 0
-    )`
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   ];
 
   for (const statement of statements) {
@@ -135,7 +95,6 @@ require('./services/predictionsCron');
 
 const app = express();
 
-<<<<<<< HEAD
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
   .map(o => o.trim())
@@ -148,11 +107,6 @@ const corsOptions = {
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-=======
-const corsOptions = {
-  origin: function (origin, callback) {
-    callback(null, true);
->>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   },
   credentials: true
 };
