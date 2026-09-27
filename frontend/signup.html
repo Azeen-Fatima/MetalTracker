@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - MetalTracker</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <style>
+    .resend-link {
+      font-size: 0.9rem;
+      margin-top: 15px;
+      display: block;
+    }
+
+    .resend-link.disabled {
+      color: var(--text-secondary);
+      pointer-events: none;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-container fade-in">
+    <div class="card auth-card slide-up">
+      <h1>MetalTracker</h1>
+      <p>Create your account</p>
+
+      <div id="step1" class="form-step active">
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <button id="btn-send-code" onclick="sendCode()" style="margin-top: 10px;">
+          <span class="btn-text">Send Code</span>
+        </button>
+      </div>
+
+      <div id="step2" class="form-step">
+        <p style="font-size: 0.9rem; margin-bottom: 15px;">Enter the 4-digit code sent to your email.</p>
+        <div class="code-inputs">
+          <input type="text" maxlength="1" id="c1" oninput="moveToNext(this, 'c2')"
+            onkeydown="handleBackspace(event, this, null)">
+          <input type="text" maxlength="1" id="c2" oninput="moveToNext(this, 'c3')"
+            onkeydown="handleBackspace(event, this, 'c1')">
+          <input type="text" maxlength="1" id="c3" oninput="moveToNext(this, 'c4')"
+            onkeydown="handleBackspace(event, this, 'c2')">
+          <input type="text" maxlength="1" id="c4" oninput="verifyCodeInput()"
+            onkeydown="handleBackspace(event, this, 'c3')">
+        </div>
+        <button id="btn-verify" onclick="verifyCode()">
+          <span class="btn-text">Verify Code</span>
+        </button>
+        <a href="#" id="resend-link" class="resend-link disabled" onclick="resendCode(event)">Resend code in 60s</a>
+      </div>
+
+      <div id="step3" class="form-step">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="password" id="password" placeholder="Password (min 8 chars, 1 digit)" oninput="checkStrength()"
+          required>
+        <div class="strength-meter">
+          <div id="strength-bar"></div>
+        </div>
+        <input type="password" id="confirm-password" placeholder="Confirm Password" required
+          style="margin-bottom: 15px;">
+        <button id="btn-signup" onclick="signup()">
+          <span class="btn-text">Sign Up</span>
+        </button>
+      </div>
+
+      <p style="margin-top: 20px; font-size: 0.9rem;">
+        Already have an account? <a href="login.html">Log In</a>
+      </p>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script>
+    if (getToken()) window.location.href = 'dashboard.html';
+
+    let userEmail = '';
+    let timerInterval;
+
+    const setBtnLoading = (btnId, isLoading, text) => {
+      const btn = document.getElementById(btnId);
+      if (isLoading) {
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div>';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = `<span class="btn-text">${text}</span>`;
+      }
+    };
+
+    const switchStep = (from, to) => {
+      document.getElementById(from).classList.remove('active');
+      setTimeout(() => { document.getElementById(to).classList.add('active'); }, 300);
+    };
+
+    async function sendCode() {
+      const email = document.getElementById('email').value.trim();
+      if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+        showToast("Please enter a valid email address.", "error");
+        return;
+      }
+      userEmail = email;
+
+      setBtnLoading('btn-send-code', true, '');
+      try {
+        await api.auth.sendVerification({ email, type: 'signup' });
+        switchStep('step1', 'step2');
+        startTimer();
+        setTimeout(() => document.getElementById('c1').focus(), 400);
+        showToast("Verification code sent to your email.");
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        setBtnLoading('btn-send-code', false, 'Send Code');
+      }
+    }
+
+    function startTimer() {
+      let timeLeft = 60;
+      const link = document.getElementById('resend-link');
+      link.classList.add('disabled');
+      link.textContent = `Resend code in ${timeLeft}s`;
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        link.textContent = `Resend code in ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          link.classList.remove('disabled');
+          link.textContent = 'Resend Code';
+        }
+      }, 1000);
+    }
+
+    function resendCode(e) {
+      e.preventDefault();
+      if (!document.getElementById('resend-link').classList.contains('disabled')) sendCode();
+    }
+
+    function moveToNext(current, nextFieldID) {
+      if (current.value.length >= current.maxLength && nextFieldID) document.getElementById(nextFieldID).focus();
+    }
+
+    function handleBackspace(e, current, prevFieldID) {
+      if (e.key === 'Backspace' && current.value === '' && prevFieldID) document.getElementById(prevFieldID).focus();
+    }
+
+    function verifyCodeInput() {
+      if (document.getElementById('c4').value) verifyCode();
+    }
+
+    async function verifyCode() {
+      const code = ['c1', 'c2', 'c3', 'c4'].map(id => document.getElementById(id).value).join('');
+      if (code.length < 4) { showToast("Please enter 4 digits.", "error"); return; }
+
+      setBtnLoading('btn-verify', true, '');
+      try {
+        await api.auth.verifyCode({ email: userEmail, code, type: 'signup' });
+        switchStep('step2', 'step3');
+        showToast("Email verified successfully.");
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        setBtnLoading('btn-verify', false, 'Verify Code');
+      }
+    }
+
+    function checkStrength() {
+      const pw = document.getElementById('password').value;
+      const bar = document.getElementById('strength-bar');
+      let strength = 0;
+      if (pw.length >= 8) strength += 33;
+      if (/\d/.test(pw)) strength += 33;
+      if (/[A-Z]/.test(pw) || /[^A-Za-z0-9]/.test(pw)) strength += 34;
+
+      bar.style.width = strength + '%';
+      if (strength < 50) bar.style.backgroundColor = 'var(--error)';
+      else if (strength < 80) bar.style.backgroundColor = 'var(--accent-gold)';
+      else bar.style.backgroundColor = 'var(--success)';
+    }
+
+    async function signup() {
+      const name = document.getElementById('name').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm-password').value;
+
+      if (!name) { showToast("Name is required.", "error"); return; }
+      if (password.length < 8 || !/\d/.test(password)) { showToast("Password must be 8+ chars with a number.", "error"); return; }
+      if (password !== confirm) { showToast("Passwords do not match.", "error"); return; }
+
+      setBtnLoading('btn-signup', true, '');
+      try {
+        await api.auth.signup({ name, email: userEmail, password });
+        showToast("Signup successful! Please log in.");
+        setTimeout(() => window.location.href = 'login.html', 1500);
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        setBtnLoading('btn-signup', false, 'Sign Up');
+      }
+    }
+  </script>
+</body>
+
+</html>
