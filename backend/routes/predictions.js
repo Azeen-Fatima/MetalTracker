@@ -31,7 +31,11 @@ router.post('/', async (req, res) => {
         );
 
         await req.db.execute(
+<<<<<<< HEAD
             'INSERT INTO leaderboard (user_id, total_predictions) VALUES (?, 1) ON CONFLICT (user_id) DO UPDATE SET total_predictions = leaderboard.total_predictions + 1',
+=======
+            'INSERT INTO leaderboard (user_id, total_predictions) VALUES (?, 1) ON DUPLICATE KEY UPDATE total_predictions = total_predictions + 1',
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             [req.user.user_id]
         );
 

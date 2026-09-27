@@ -17,9 +17,16 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
+<<<<<<< HEAD
     "node-cron": "^3.0.2",
     "nodemailer": "^8.0.1",
     "pdfkit": "^0.13.0",
     "pg": "^8.11.3"
+=======
+    "mysql2": "^3.6.2",
+    "node-cron": "^3.0.2",
+    "nodemailer": "^8.0.1",
+    "pdfkit": "^0.13.0"
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
   }
 }

@@ -2,13 +2,21 @@ const cron = require('node-cron');
 const pool = require('../database');
 const metalsService = require('./metals');
 
+<<<<<<< HEAD
+=======
+// Run every hour to check predictions made 24+ hours ago
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
 cron.schedule('0 * * * *', async () => {
     try {
         const [pending] = await pool.execute(`
             SELECT id, user_id, metal, prediction, price_at_prediction 
             FROM price_predictions 
             WHERE status = 'pending' 
+<<<<<<< HEAD
             AND created_at <= (NOW() - INTERVAL '24 hours')
+=======
+            AND created_at <= (NOW() - INTERVAL 24 HOUR)
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         `);
 
         if (pending.length === 0) return;

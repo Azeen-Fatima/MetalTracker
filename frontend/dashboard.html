@@ -116,6 +116,7 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         <div class="tools-grid">
             <div class="card tool-card slide-up" style="animation-delay: 0.3s;">
                 <h2 class="section-title">Metal Calculator</h2>
@@ -170,6 +171,58 @@
                         <tbody id="leaderboard-body"></tbody>
                     </table>
                 </div>
+=======
+        <div class="card slide-up" style="animation-delay: 0.3s;">
+            <h2 class="section-title">Metal Calculator</h2>
+            <div class="calc-grid">
+                <input type="number" id="calc-amount" placeholder="Amount" value="1" oninput="calculate()">
+                <select id="calc-unit" onchange="calculate()">
+                    <option value="tola">Tola</option>
+                    <option value="gram">Gram</option>
+                    <option value="toz">Troy Oz</option>
+                </select>
+                <select id="calc-metal" onchange="calculate()">
+                    <option value="gold">Gold</option>
+                    <option value="silver">Silver</option>
+                    <option value="copper">Copper</option>
+                </select>
+                <select id="calc-currency" onchange="calculate()">
+                    <option value="USD">USD</option>
+                    <option value="PKR">PKR</option>
+                </select>
+            </div>
+            <div style="margin-top:20px; font-size: 1.5rem; font-weight: bold; color: var(--accent-gold);"
+                id="calc-result">0.00</div>
+        </div>
+
+        <div class="card slide-up" style="animation-delay: 0.4s;">
+            <h2 class="section-title">Price Predictions</h2>
+            <div class="predict-grid">
+                <select id="pred-metal">
+                    <option value="gold">Gold</option>
+                    <option value="silver">Silver</option>
+                    <option value="copper">Copper</option>
+                </select>
+                <select id="pred-dir">
+                    <option value="up">Going Up 📈</option>
+                    <option value="down">Going Down 📉</option>
+                </select>
+                <button onclick="submitPrediction()">Submit Prediction</button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>Correct</th>
+                            <th>Total</th>
+                            <th>Accuracy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body"></tbody>
+                </table>
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             </div>
         </div>
 
@@ -213,6 +266,10 @@
                     const badge = document.getElementById('notif-badge');
                     badge.style.display = 'none';
                     badge.textContent = '0';
+<<<<<<< HEAD
+=======
+                    // We keep the list intact until next fetch so user can read them
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                 } catch (e) {
                     console.error('Failed to mark read', e);
                 }
@@ -239,7 +296,11 @@
             const token = getToken();
             if (!token) { window.location.href = 'login.html'; return; }
             const user = JSON.parse(localStorage.getItem('metaltracker_user'));
+<<<<<<< HEAD
             if (user && user.theme === 'light') document.body.classList.add('light');
+=======
+
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             try {
                 let exData = { rate: 1 };
                 let watchData = [];
@@ -268,9 +329,16 @@
 
                 document.getElementById('theme-display').textContent = userPref.theme === 'light' ? '☀️' : '🌙';
 
+<<<<<<< HEAD
                 try { initCharts(); } catch (e) { console.error("Chart init failed", e); }
                 await fetchPrices();
 
+=======
+                initCharts();
+                await fetchPrices();
+
+                // Load supplementary items individually to prevent a single failure from cascading
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
                 fetchHistorical('gold', '2d');
                 fetchHistorical('silver', '2d');
                 fetchHistorical('copper', '2d');
@@ -285,7 +353,11 @@
                 }, 300000);
                 setInterval(fetchAlerts, 60000);
             } catch (e) {
+<<<<<<< HEAD
                 console.error("Dashboard init failed", e);
+=======
+                showToast("Failed to load dashboard data", "error");
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             }
         };
 
@@ -363,6 +435,11 @@
             }
         };
 
+<<<<<<< HEAD
+=======
+        // Header interactivity removed per user request
+
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
         let activeTimeframes = { gold: '2d', silver: '2d', copper: '2d' };
 
         const recreateCharts = () => {
@@ -747,6 +824,10 @@
                 }, 300);
             }
 
+<<<<<<< HEAD
+=======
+            // Refresh when coming back to this page
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             window.addEventListener('pageshow', function () {
                 doRefresh();
             });
@@ -757,6 +838,10 @@
                 }
             });
 
+<<<<<<< HEAD
+=======
+            // Pull to refresh on mobile
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
             var startY = 0;
             var pulling = false;
 

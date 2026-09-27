@@ -146,6 +146,10 @@ a:hover {
   display: block;
 }
 
+<<<<<<< HEAD
+=======
+/* Animations */
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -248,6 +252,7 @@ a:hover {
   width: 0;
   transition: width 0.3s, background-color 0.3s;
 }
+<<<<<<< HEAD
 
 @media (max-width: 400px) {
   .card {
@@ -264,3 +269,5 @@ a:hover {
     font-size: 20px;
   }
 }
+=======
+>>>>>>> f188381c13324b9a002e1cc623afae2d967a027f
